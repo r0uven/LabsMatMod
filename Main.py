@@ -1,8 +1,9 @@
 import threading
 import tkinter as tk
 from Lab1.Lab1Interface import lab1ClassInterface
-from Lab2.Lab2Interface import lab2ClassInterface, start_file_monitoring
-
+from Lab2.Lab2Interface import lab2ClassInterface
+from Lab3.Lab3Interface import lab3ClassInterface
+from file_watcher import start_file_monitoring
 
 class App(tk.Tk):
     def __init__(self):
@@ -29,7 +30,7 @@ class App(tk.Tk):
         self.frames = {}
 
         # Добавляем фреймы в словарь
-        for F in (lab1ClassInterface, lab2ClassInterface):
+        for F in (lab1ClassInterface, lab2ClassInterface, lab3ClassInterface):
             frame = F(content_frame, self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -41,6 +42,9 @@ class App(tk.Tk):
         button_for_lab2 = tk.Button(menu_frame, text="Лабораторная №2", command=lambda: self.show_frame("lab2ClassInterface"))
         button_for_lab2.pack(pady=10, padx=10, fill="x")
 
+        button_for_lab3 = tk.Button(menu_frame, text="Лабораторная №3", command=lambda: self.show_frame("lab3ClassInterface"))
+        button_for_lab3.pack(pady=10, padx=10, fill="x")
+
         # Показываем начальный фрейм
         self.show_frame("lab1ClassInterface")
 
@@ -48,19 +52,13 @@ class App(tk.Tk):
         """Поднимает выбранный фрейм на передний план"""
         frame = self.frames[frame_name]
         frame.tkraise()
+
         if frame_name == "lab1ClassInterface":
             # Устанавливаем привязку клавиши Enter только для lab1
             self.unbind("<Return>")  # Сначала удаляем предыдущие привязки
             self.bind("<Return>", frame.on_enter_pressed) # Привязываем клавишу "Enter" к функции добавления чисел(on_add_click) через функцию обработки нажатия клавиши Enter
-        if frame_name == "lab2ClassInterface":
-            # Функция для запуска наблюдателя в отдельном потоке
-            file_path = "output.txt"
-            # Создаем поток для мониторинга изменений файла
-            file_monitor_thread = threading.Thread(target=start_file_monitoring, args=(file_path,self.frames['lab2ClassInterface']))
-            file_monitor_thread.daemon = True  # Поток будет завершен, если основной поток завершится
-            file_monitor_thread.start()
-
-
+        self.frames["lab2ClassInterface"].on_initialize()
+        self.frames["lab3ClassInterface"].on_initialize()
 
 
 if __name__ == "__main__":

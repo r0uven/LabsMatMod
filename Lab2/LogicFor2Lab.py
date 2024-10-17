@@ -36,7 +36,7 @@ def eval_of_excess(randNumbersArray_FromFile):
 
 
 # Функция для вычисления характеристик из двух лабораторных
-def calculation_of_characteristics_from_2_labs(asymmetry_coefficient_label, excess_label):
+def calculation_of_characteristics_from_2_labs():
     """
     Вычисляет коэффициент асимметрии и эксцесс на основе данных из файла output.txt
     и обновляет переданные метки на интерфейсе.
@@ -45,7 +45,7 @@ def calculation_of_characteristics_from_2_labs(asymmetry_coefficient_label, exce
     with open("output.txt", "r") as file:
         randNumbersArray_FromFile = file.read().split(", ")  # Разбиваем строку на числа по запятой
 
-    randNumbersArray_FromFile.pop()  # Убираем последний пустой элемент, если он есть
+    randNumbersArray_FromFile.pop()  # Убираем последний пустой элемент
     randNumbersArray_FromFile = list(map(float, randNumbersArray_FromFile))  # Преобразуем строковые значения в числа
 
     # Вычисление коэффициента асимметрии
@@ -54,6 +54,6 @@ def calculation_of_characteristics_from_2_labs(asymmetry_coefficient_label, exce
     # Вычисление эксцесса
     excess = eval_of_excess(randNumbersArray_FromFile)
 
-    # Обновляем метки на интерфейсе с новыми значениями
-    asymmetry_coefficient_label.config(text=f"Коэффициент асимметрии(A) = {asymmetry_coefficient:.5f}")
-    excess_label.config(text=f"Эксцесс(E) =  {excess:.5f}")
+
+    return {"asymmetry_coefficient":asymmetry_coefficient,
+            "excess":excess}

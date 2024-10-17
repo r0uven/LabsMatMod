@@ -1,8 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, Frame
-from tkinter.constants import CENTER
 
-from PIL.ImageOps import expand
 
 from Lab1 import LogicFor1Lab
 
@@ -23,19 +21,19 @@ class lab1ClassInterface(tk.Frame):
         self.tableFrame = Frame(self)
         self.tableFrame.pack(fill="both")
 
-        # Лейбл для отображения выборочной средней и оценки дисперсии
-        self.additionalCharacteristics = tk.Label(self, font=('',30,))
-        self.additionalCharacteristics.pack(anchor=tk.CENTER, expand=True)
+
 
         # Создаем Treeview для отображения таблицы
         self.table = ttk.Treeview(self.tableFrame, columns=("dummy",), show='headings', height=5)
         self.table.column("dummy", width=0, stretch=False)  # Скрываем начальный столбец
+        style = ttk.Style()
+        style.configure("Treeview", rowheight=30)  # Устанавливаем высоту строк
 
         # добавляем горизонтальную прокрутку для таблицы
         self.tableScrollbar = ttk.Scrollbar(self.tableFrame, orient="horizontal", command=self.table.xview)
         self.table.configure(xscrollcommand=self.tableScrollbar.set)
 
-        # Добавляем Treeview на окно
+        # Добавляем Treeview и его скроллбар на окно
         self.tableScrollbar.pack(side=tk.BOTTOM, fill=tk.X, padx = (10,10))
         self.table.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx = (10,10))
 
@@ -48,8 +46,8 @@ class lab1ClassInterface(tk.Frame):
         self.add_button.grid(row=0, column=1, padx=10, pady=10)
 
         # Кнопка для вычисления значений, построения графиков, в общем для основной логики приложения
-        eval_button = tk.Button(self.inputFieldsAndButtons, text="Рассчитать", command=self.on_eval_click, font=("Arial", 16))
-        eval_button.grid(row=0, column=2, padx=(10, 0), pady=10)
+        self.eval_button = tk.Button(self.inputFieldsAndButtons, text="Рассчитать", command=self.on_eval_click, font=("Arial", 16))
+        self.eval_button.grid(row=0, column=2, padx=(10, 0), pady=10)
 
 
         # Создаем метку для отображения введенных цифр
@@ -62,16 +60,23 @@ class lab1ClassInterface(tk.Frame):
         self.text_widget.configure(xscrollcommand=self.scrollbarText.set) # Привязываем скролбар к текстовому полю
         self.text_widget.config(state=tk.DISABLED) # Устанавливаем состояние текстового поля в DISABLED
 
+        # Лейбл для отображения выборочной средней и оценки дисперсии
+        self.additionalCharacteristics = tk.Label(self, font=('', 26,))
+        self.additionalCharacteristics.pack(anchor=tk.CENTER, expand=True)
+
+        self.randNumbersArray = [] # массив хранящий значения которые вносит пользователь
+
         # Устанавливаем фокус на поле ввода при запуске приложения
         self.entry.focus_set()
 
 
     # функция добавления числа в различные переменные
     def on_add_action(self, event=None):
+
         user_input = self.entry.get().strip()
         if user_input:
-            LogicFor1Lab.randNumbersArray.append(float(user_input)) # записываем в переменную из файла логики введенные значения
-            numbers_str = ', '.join("{:.2f}".format(num) for num in LogicFor1Lab.randNumbersArray)  # делаем красивую строчку для отображения введенных чисел
+            self.randNumbersArray.append(float(user_input)) # записываем в переменную из файла логики введенные значения
+            numbers_str = ', '.join("{:.2f}".format(num) for num in self.randNumbersArray)  # делаем красивую строчку для отображения введенных чисел
 
             # запись в текстовый файл
             self.text_widget.config(state=tk.NORMAL)  # Включаем редактирование
@@ -93,4 +98,10 @@ class lab1ClassInterface(tk.Frame):
 
     # Функция для инициализации расчетов(все расчеты в файле LogicFor1Lab.py)
     def on_eval_click(self):
-        LogicFor1Lab.evaluate_on_display(self.additionalCharacteristics, self.table)  # переход ко 2 файлу содержащему логику
+        valuesFrom1Lab = LogicFor1Lab.calculation_of_characteristics_from_1_labs()  # переход ко 2 файлу содержащему логику
+        LogicFor1Lab.add_to_table(valuesFrom1Lab['intervalBoundaries_ForTable'], valuesFrom1Lab['empiricalFrequencies_ForTable'],
+                     len(valuesFrom1Lab['intervalBoundaries_ForTable']), self.table)
+        self.additionalCharacteristics.config(
+            text=f"Выборочная средняя = {valuesFrom1Lab['sampleMean']}\n Оценка дисперсии = {valuesFrom1Lab['EstimationOfVariance']}")
+        LogicFor1Lab.constructing_histograms(valuesFrom1Lab['valuesOfTheStatisticalFunction'])
+
