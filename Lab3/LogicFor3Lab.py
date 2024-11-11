@@ -1,32 +1,32 @@
 import numpy as np
 from scipy.stats import norm
-from Lab1.LogicFor1Lab import add_to_table
 
 
-def eval_theoretical_frequencies(intervalBoundaries):
 
+def eval_theoretical_frequencies(coordinatesOfTheResultingIntervals):
 
     # 1. Рассчитаем выборочную среднюю и стандартное отклонение
-    mean = np.mean(intervalBoundaries)
-    std_dev = np.std(intervalBoundaries, ddof=1)
+    mean = np.mean(coordinatesOfTheResultingIntervals)
+    std_dev = np.std(coordinatesOfTheResultingIntervals, ddof=1)
 
     # 2. Вычисляем вероятности для интервалов
+    probabilitiesForTable = []
     probabilities = []
-    probabilities.append("Теоретические частоты") # заголовок данных
-    for i in range(len(intervalBoundaries) - 1):
-        z_i = (intervalBoundaries[i][0] - mean) / std_dev
-        z_next = (intervalBoundaries[i][1] - mean) / std_dev
+    probabilitiesForTable.append("Теоретические частоты") # заголовок данных
+    for i in range(len(coordinatesOfTheResultingIntervals) - 1):
+        z_i = (coordinatesOfTheResultingIntervals[i] - mean) / std_dev
+        z_next = (coordinatesOfTheResultingIntervals[i + 1] - mean) / std_dev
         # Вычисляем вероятность попадания в интервал
         prob = norm.cdf(z_next) - norm.cdf(z_i)
-        probabilities.append("{:.5f}".format(prob))
-    return probabilities
+        probabilitiesForTable.append("{:.5f}".format(prob))
+        probabilities.append(prob)
+    return probabilitiesForTable, probabilities
 
 
 
-def calculation_of_characteristics_from_3_labs(intervalBoundaries_ForTable,intervalBoundaries, table):
+def calculation_of_characteristics_from_3_labs(valuesFrom1Lab):
+    coordinatesOfTheResultingIntervals = valuesFrom1Lab['coordinatesOfTheResultingIntervals']
 
-    theoreticalFrequencies = eval_theoretical_frequencies(intervalBoundaries)
-
-    add_to_table(intervalBoundaries_ForTable, theoreticalFrequencies, len(theoreticalFrequencies), table)
-
-
+    theoreticalFrequenciesForTable, theoreticalFrequencies  = eval_theoretical_frequencies(coordinatesOfTheResultingIntervals)
+    return {"theoreticalFrequencies":theoreticalFrequencies,
+            'theoreticalFrequenciesForTable': theoreticalFrequenciesForTable}

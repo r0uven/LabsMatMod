@@ -103,5 +103,5 @@ class lab1ClassInterface(tk.Frame):
                      len(valuesFrom1Lab['intervalBoundaries_ForTable']), self.table)
         self.additionalCharacteristics.config(
             text=f"Выборочная средняя = {valuesFrom1Lab['sampleMean']}\n Оценка дисперсии = {valuesFrom1Lab['EstimationOfVariance']}")
-        LogicFor1Lab.constructing_histograms(valuesFrom1Lab['valuesOfTheStatisticalFunction'])
+        LogicFor1Lab.constructing_histograms(valuesFrom1Lab)
 

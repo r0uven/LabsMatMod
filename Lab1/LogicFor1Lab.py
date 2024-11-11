@@ -1,6 +1,9 @@
 import tkinter as tk
 import math
+from collections import Counter
+
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 # Функция вычисления выборочной средней
@@ -31,8 +34,18 @@ def evalOf_intervalBoundaries_and_empiricalFrequencies(coordinatesOfTheResulting
     empiricalFrequencies = []
     for i in range(len(randNumbersArray) - 1):
         intervalBoundaries.append((float('{:.3f}'.format(coordinatesOfTheResultingIntervals[i])), float('{:.3f}'.format(coordinatesOfTheResultingIntervals[i+1]))))
-        empiricalFrequencies.append(i + 1 / len(randNumbersArray))
-    return intervalBoundaries, empiricalFrequencies
+    # Определение интервалов
+    interval_indices = np.digitize(randNumbersArray, coordinatesOfTheResultingIntervals)
+
+    # Подсчитываем количество каждого числа
+    counted = Counter(interval_indices)
+    # Сортируем по ключам (числам)
+    sorted_counted = dict(sorted(counted.items()))
+
+    for i in range(1, len(intervalBoundaries)+1):
+        empiricalFrequencies.append(sorted_counted.get(i, 0)/len(randNumbersArray))
+
+    return intervalBoundaries, empiricalFrequencies, sorted_counted
 
 
 # Функция вычисления значений статистического функции(ряда)
@@ -86,22 +99,25 @@ def add_to_table(bound, investigating_parameter, num_columns, table):
     table.insert("", "end", values=bound)
     table.insert("", "end", values=investigating_parameter)
 
-def constructing_histograms(valuesOfTheStatisticalFunction):
+def constructing_histograms(valuesFrom1Lab):
+    empiricalFrequencies = valuesFrom1Lab['empiricalFrequencies']
+    coordinatesOfTheResultingIntervals = valuesFrom1Lab['coordinatesOfTheResultingIntervals']
+    valuesOfTheStatisticalFunction = valuesFrom1Lab['valuesOfTheStatisticalFunction']
+
     # Создаем фигуру и две оси (subplot)
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))  # 1 ряд, 2 колонки
 
     # Первая гистограмма
-    ax1.hist(valuesOfTheStatisticalFunction, bins=len(valuesOfTheStatisticalFunction), edgecolor='black', color='blue',
+    ax1.hist(empiricalFrequencies, bins=len(empiricalFrequencies), edgecolor='black', color='blue',
              alpha=0.7)
-    ax1.set_title('Гистограмма статического распределения\n значений стат функц')
+    ax1.set_title('Статистический ряд')
 
-    # Вторая гистограмма
-    indices = list(range(len(valuesOfTheStatisticalFunction)))
-    unique_numbers = list(valuesOfTheStatisticalFunction)  # Уникальные значения чисел
-    unique_numbers.sort()  # Сортируем их
-
-    ax2.bar(indices, unique_numbers)
-    ax2.set_title('Гистограмма значений стат функции')
+    ax2.step(coordinatesOfTheResultingIntervals, valuesOfTheStatisticalFunction, where='post', label='F(x)')
+    ax2.set_title('Статистическая функция')
+    ax2.set_xlabel("Значение")
+    ax2.set_ylabel("F(x)")
+    ax2.grid(True)
+    ax2.legend()
 
     # Показываем график
     plt.tight_layout()  # Автоматически подгоняет отступы
@@ -126,10 +142,9 @@ def calculation_of_characteristics_from_1_labs():
                                                                                   # координаты образующихся интервалов
                                                                                   min(randNumbersArray_FromFile),
                                                                                   numberOfPlots_triangle)
-    # границы интервалов
-    intervalBoundaries = evalOf_intervalBoundaries_and_empiricalFrequencies(coordinatesOfTheResultingIntervals, randNumbersArray_FromFile)[0]
-    # эмпирические частоты
-    empiricalFrequencies = evalOf_intervalBoundaries_and_empiricalFrequencies(coordinatesOfTheResultingIntervals, randNumbersArray_FromFile)[1]
+
+    # границы интервалов, эмпирические частоты, число попаданий числа в интервал
+    intervalBoundaries, empiricalFrequencies, amountOfNumbersAtIntervals = evalOf_intervalBoundaries_and_empiricalFrequencies(coordinatesOfTheResultingIntervals, randNumbersArray_FromFile)
 
     # добавляем в начало каждого массива(листа) заголовок данных, а также преобразуем границы интервалов в красивый для представления вид
     intervalBoundaries_ForTable = []
@@ -147,9 +162,12 @@ def calculation_of_characteristics_from_1_labs():
 
     return {"sampleMean":sampleMean,
             "EstimationOfVariance":EstimationOfVariance,
+            "standardDeviation": math.sqrt(EstimationOfVariance),
             "coordinatesOfTheResultingIntervals":coordinatesOfTheResultingIntervals,
             "valuesOfTheStatisticalFunction":valuesOfTheStatisticalFunction,
             "intervalBoundaries":intervalBoundaries,
             "empiricalFrequencies":empiricalFrequencies,
+            "amountOfNumbersAtIntervals":amountOfNumbersAtIntervals,
             "intervalBoundaries_ForTable":intervalBoundaries_ForTable,
-            "empiricalFrequencies_ForTable":empiricalFrequencies_ForTable}
+            "empiricalFrequencies_ForTable":empiricalFrequencies_ForTable,
+            "randNumbersArray_FromFile":randNumbersArray_FromFile}

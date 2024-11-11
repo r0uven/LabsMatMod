@@ -1,9 +1,9 @@
-import threading
 import tkinter as tk
 from Lab1.Lab1Interface import lab1ClassInterface
 from Lab2.Lab2Interface import lab2ClassInterface
 from Lab3.Lab3Interface import lab3ClassInterface
-from file_watcher import start_file_monitoring
+from Lab4.Lab4Interface import lab4ClassInterface
+
 
 class App(tk.Tk):
     def __init__(self):
@@ -30,7 +30,7 @@ class App(tk.Tk):
         self.frames = {}
 
         # Добавляем фреймы в словарь
-        for F in (lab1ClassInterface, lab2ClassInterface, lab3ClassInterface):
+        for F in (lab1ClassInterface, lab2ClassInterface, lab3ClassInterface, lab4ClassInterface):
             frame = F(content_frame, self)
             self.frames[F.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
@@ -43,6 +43,9 @@ class App(tk.Tk):
         button_for_lab2.pack(pady=10, padx=10, fill="x")
 
         button_for_lab3 = tk.Button(menu_frame, text="Лабораторная №3", command=lambda: self.show_frame("lab3ClassInterface"))
+        button_for_lab3.pack(pady=10, padx=10, fill="x")
+
+        button_for_lab3 = tk.Button(menu_frame, text="Лабораторная №4", command=lambda: self.show_frame("lab4ClassInterface"))
         button_for_lab3.pack(pady=10, padx=10, fill="x")
 
         # Показываем начальный фрейм

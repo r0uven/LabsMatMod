@@ -1,19 +1,47 @@
 import numpy as np
-from scipy.stats import norm
+import scipy.stats as stats
+import pandas as pd
 
 # Параметры нормального распределения
-mu = 0  # математическое ожидание
-sigma = 1  # стандартное отклонение (корень из дисперсии)
+mu, sigma = 0, 1  # среднее и стандартное отклонение
 
-# Границы интервала
-a = -1
-b = 1
+# Генерация выборки
+n = 1000  # размер выборки
+data = np.random.normal(mu, sigma, n)
 
-# Вычисление функции распределения (CDF) для границ
-P_a = norm.cdf(a, mu, sigma)
-P_b = norm.cdf(b, mu, sigma)
+# Определение интервалов
+num_bins = 10
+hist, bin_edges = np.histogram(data, bins=num_bins)
 
-# Вероятность попадания на интервал [a, b]
-probability = P_b - P_a
+# Вычисление эмпирических частот
+empirical_freqs = hist / n
 
-print(f'Вероятность попадания на интервал [{a}, {b}]: {probability:.4f}')
+# Вычисление теоретических частот
+bin_centers = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+theoretical_freqs = stats.norm.pdf(bin_centers, mu, sigma) * n * (bin_edges[1] - bin_edges[0])
+
+# Формирование таблицы результатов
+results_table = pd.DataFrame({
+    'Интервал': [f"{bin_edges[i]} - {bin_edges[i+1]}" for i in range(len(bin_edges)-1)],
+    'Теоретические частоты': theoretical_freqs,
+    'Эмпирические частоты': hist
+})
+
+print(results_table)
+
+# Расчет критерия Пирсона
+chi_squared_stat = np.sum((hist - theoretical_freqs) ** 2 / theoretical_freqs)
+dof = num_bins - 1 - 1  # число степеней свободы (число интервалов - 1 - число параметров оцененных)
+alpha = 0.05  # уровень значимости
+
+# Табличное значение критерия Пирсона
+critical_value = stats.chi2.ppf(1 - alpha, dof)
+
+# Результаты
+print(f"Статистика критерия Пирсона: {chi_squared_stat:.4f}")
+print(f"Критическое значение для уровня значимости {alpha}: {critical_value:.4f}")
+
+if chi_squared_stat > critical_value:
+    print("Гипотезу отвергаем: распределение не нормальное.")
+else:
+    print("Гипотезу принимаем: распределение нормальное.")
