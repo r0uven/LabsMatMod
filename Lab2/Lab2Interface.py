@@ -33,5 +33,5 @@ class lab2ClassInterface(tk.Frame):
         # Инициализируем расчет характеристик сразу при создании интерфейса
         valuesFrom2Lab = LogicFor2Lab.calculation_of_characteristics_from_2_labs(valuesFrom1Lab)
         # Обновляем метки на интерфейсе с новыми значениями
-        self.asymmetry_coefficient_label.config(text=f"Коэффициент асимметрии(A) = {valuesFrom2Lab["asymmetry_coefficient"]:.5f}")
-        self.excess_label.config(text=f"Эксцесс(E) =  {valuesFrom2Lab["excess"]:.5f}")
+        self.asymmetry_coefficient_label.config(text=f"Коэффициент асимметрии(A) = {valuesFrom2Lab['asymmetry_coefficient']:.5f}")
+        self.excess_label.config(text=f"Эксцесс(E) =  {valuesFrom2Lab['excess']:.5f}")

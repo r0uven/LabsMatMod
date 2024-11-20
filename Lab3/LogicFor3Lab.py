@@ -12,7 +12,7 @@ def eval_theoretical_frequencies(coordinatesOfTheResultingIntervals):
     # 2. Вычисляем вероятности для интервалов
     probabilitiesForTable = []
     probabilities = []
-    probabilitiesForTable.append("Теоретические частоты") # заголовок данных
+    probabilitiesForTable.append("Теоретические частоты")  # заголовок данных
     for i in range(len(coordinatesOfTheResultingIntervals) - 1):
         z_i = (coordinatesOfTheResultingIntervals[i] - mean) / std_dev
         z_next = (coordinatesOfTheResultingIntervals[i + 1] - mean) / std_dev
