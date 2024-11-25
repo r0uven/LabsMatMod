@@ -12,10 +12,10 @@ def evalSampleMean(randArr):
 
 
 # Функция вычисления оценки дисперсии
-def evalEstimationOfVariance(sampleMean, randArr):
+def evalEstimationOfVariance(randArr):
     res = []
     for i in range(len(randArr)):
-        res.append((randArr[i] - sampleMean) ** 2)
+        res.append((randArr[i] - evalSampleMean(randArr)) ** 2)
 
     return sum(res) / (len(randArr) - 1)
 
@@ -133,7 +133,7 @@ def calculation_of_characteristics_from_1_labs():
     randNumbersArray_FromFile = list(map(float, randNumbersArray_FromFile))  # Преобразуем строковые значения в числа
 
     sampleMean = evalSampleMean(randNumbersArray_FromFile)  # выборочная средняя
-    EstimationOfVariance = evalEstimationOfVariance(sampleMean, randNumbersArray_FromFile)  # оценка дисперсии
+    EstimationOfVariance = evalEstimationOfVariance(randNumbersArray_FromFile)  # оценка дисперсии
 
 
     numberOfPlots_triangle = (max(randNumbersArray_FromFile) - min(randNumbersArray_FromFile)) / (

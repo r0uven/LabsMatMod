@@ -69,6 +69,9 @@ class lab1ClassInterface(tk.Frame):
         # Устанавливаем фокус на поле ввода при запуске приложения
         self.entry.focus_set()
 
+        self._valuesFrom1Lab = None
+
+        self.valuesFrom1LabEval()
 
     # функция добавления числа в различные переменные
     def on_add_action(self, event=None):
@@ -98,10 +101,19 @@ class lab1ClassInterface(tk.Frame):
 
     # Функция для инициализации расчетов(все расчеты в файле LogicFor1Lab.py)
     def on_eval_click(self):
-        valuesFrom1Lab = LogicFor1Lab.calculation_of_characteristics_from_1_labs()  # переход ко 2 файлу содержащему логику
-        LogicFor1Lab.add_to_table(valuesFrom1Lab['intervalBoundaries_ForTable'], valuesFrom1Lab['empiricalFrequencies_ForTable'],
-                     len(valuesFrom1Lab['intervalBoundaries_ForTable']), self.table)
+        LogicFor1Lab.add_to_table(self._valuesFrom1Lab['intervalBoundaries_ForTable'], self._valuesFrom1Lab['empiricalFrequencies_ForTable'],
+                     len(self._valuesFrom1Lab['intervalBoundaries_ForTable']), self.table)
         self.additionalCharacteristics.config(
-            text=f"Выборочная средняя = {valuesFrom1Lab['sampleMean']}\n Оценка дисперсии = {valuesFrom1Lab['EstimationOfVariance']}")
-        LogicFor1Lab.constructing_histograms(valuesFrom1Lab)
+            text=f"Выборочная средняя = {self._valuesFrom1Lab['sampleMean']}\n Оценка дисперсии = {self._valuesFrom1Lab['EstimationOfVariance']}")
+        LogicFor1Lab.constructing_histograms(self._valuesFrom1Lab)
 
+    def valuesFrom1LabEval(self):
+        self._valuesFrom1Lab = LogicFor1Lab.calculation_of_characteristics_from_1_labs()  # переход ко 2 файлу содержащему логику
+
+    @property
+    def valuesFrom1Lab(self):
+        return self._valuesFrom1Lab
+
+    @valuesFrom1Lab.setter
+    def valuesFrom1Lab(self, value):
+        self._valuesFrom1Lab = value

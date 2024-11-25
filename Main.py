@@ -3,6 +3,8 @@ from Lab1.Lab1Interface import lab1ClassInterface
 from Lab2.Lab2Interface import lab2ClassInterface
 from Lab3.Lab3Interface import lab3ClassInterface
 from Lab4.Lab4Interface import lab4ClassInterface
+from Lab5.Lab5Interface import lab5ClassInterface
+from Lab6.Lab6Interface import lab6ClassInterface
 
 
 class App(tk.Tk):
@@ -29,11 +31,31 @@ class App(tk.Tk):
         # Словарь для хранения фреймов
         self.frames = {}
 
+        # Список классов и их параметров
+        frame_configs = [
+            {"class": lab1ClassInterface, "extra_params": []},
+            {"class": lab2ClassInterface, "extra_params": ["lab1ClassInterface"]},
+            {"class": lab3ClassInterface, "extra_params": ["lab1ClassInterface"]},
+            {"class": lab4ClassInterface, "extra_params": ["lab1ClassInterface", "lab3ClassInterface"]},
+            {"class": lab5ClassInterface, "extra_params": []},
+            {"class": lab6ClassInterface, "extra_params": []},
+        ]
+
         # Добавляем фреймы в словарь
-        for F in (lab1ClassInterface, lab2ClassInterface, lab3ClassInterface, lab4ClassInterface):
-            frame = F(content_frame, self)
-            self.frames[F.__name__] = frame
+        for config in frame_configs:
+            cls = config["class"]
+            extra_param_names = config["extra_params"]
+
+            # Находим параметры по их именам
+            extra_params = [self.frames[name] for name in extra_param_names]
+
+            # Создаём фрейм, передавая параметры как список
+            frame = cls(content_frame, self, *extra_params)
+
+            # Сохраняем и размещаем
+            self.frames[cls.__name__] = frame
             frame.grid(row=0, column=0, sticky="nsew")
+
 
         # Кнопки для меню слева
         button_for_lab1 = tk.Button(menu_frame, text="Лабораторная №1", command=lambda: self.show_frame("lab1ClassInterface"))
@@ -45,8 +67,14 @@ class App(tk.Tk):
         button_for_lab3 = tk.Button(menu_frame, text="Лабораторная №3", command=lambda: self.show_frame("lab3ClassInterface"))
         button_for_lab3.pack(pady=10, padx=10, fill="x")
 
-        button_for_lab3 = tk.Button(menu_frame, text="Лабораторная №4", command=lambda: self.show_frame("lab4ClassInterface"))
-        button_for_lab3.pack(pady=10, padx=10, fill="x")
+        button_for_lab4 = tk.Button(menu_frame, text="Лабораторная №4", command=lambda: self.show_frame("lab4ClassInterface"))
+        button_for_lab4.pack(pady=10, padx=10, fill="x")
+
+        button_for_lab5 = tk.Button(menu_frame, text="Лабораторная №5", command=lambda: self.show_frame("lab5ClassInterface"))
+        button_for_lab5.pack(pady=10, padx=10, fill="x")
+
+        button_for_lab6 = tk.Button(menu_frame, text="Лабораторная №6", command=lambda: self.show_frame("lab6ClassInterface"))
+        button_for_lab6.pack(pady=10, padx=10, fill="x")
 
         # Показываем начальный фрейм
         self.show_frame("lab1ClassInterface")
@@ -62,6 +90,9 @@ class App(tk.Tk):
             self.bind("<Return>", frame.on_enter_pressed) # Привязываем клавишу "Enter" к функции добавления чисел(on_add_click) через функцию обработки нажатия клавиши Enter
         self.frames["lab2ClassInterface"].on_initialize()
         self.frames["lab3ClassInterface"].on_initialize()
+        self.frames["lab4ClassInterface"].on_initialize()
+        self.frames["lab5ClassInterface"].on_initialize()
+        self.frames["lab6ClassInterface"].on_initialize()
 
 
 if __name__ == "__main__":

@@ -8,8 +8,9 @@ from Lab3 import LogicFor3Lab
 
 # Класс интерфейса для лабораторной 3
 class lab3ClassInterface(tk.Frame):
-    def __init__(self, parent, controller):
+    def __init__(self, parent, controller, lab1=None):
         super().__init__(parent)
+        self.lab1 = lab1
 
         self.tableFrame = Frame(self)
         self.tableFrame.pack(fill="both")
@@ -25,13 +26,28 @@ class lab3ClassInterface(tk.Frame):
         # Добавляем Treeview и его скроллбар на окно
         self.tableScrollbar.pack(side=tk.BOTTOM, fill=tk.X, padx=(10, 10))
         self.table.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(10, 10))
-        self.on_initialize()
+
+
+        self._valuesFrom3Lab = None
+
+
+        #self.on_initialize()
 
 
 
     def on_initialize(self):
-        valuesFrom1Lab = LogicFor1Lab.calculation_of_characteristics_from_1_labs()  # переход к файлу содержащему методы вычисления нужных в этой лабе данных
-        valuesFrom3Lab = LogicFor3Lab.calculation_of_characteristics_from_3_labs(valuesFrom1Lab)
+        valuesFrom1Lab = self.lab1.valuesFrom1Lab
+        self._valuesFrom3Lab = LogicFor3Lab.calculation_of_characteristics_from_3_labs(valuesFrom1Lab)
         intervalBoundaries_ForTable = valuesFrom1Lab['intervalBoundaries_ForTable']
-        theoreticalFrequenciesForTable = valuesFrom3Lab['theoreticalFrequenciesForTable']
+        theoreticalFrequenciesForTable = self._valuesFrom3Lab['theoreticalFrequenciesForTable']
         add_to_table(intervalBoundaries_ForTable, theoreticalFrequenciesForTable, len(theoreticalFrequenciesForTable), self.table)
+
+
+    @property
+    def valuesFrom3Lab(self):
+        return self._valuesFrom3Lab
+
+
+    @valuesFrom3Lab.setter
+    def valuesFrom3Lab(self, value):
+        self._valuesFrom3Lab = value

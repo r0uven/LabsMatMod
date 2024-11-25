@@ -1,7 +1,7 @@
 import scipy.stats as stats
 
 
-def testingTheHypothesis(valuesFrom1Lab, valuesFrom3Lab):
+def testingThePearsonHypothesis(valuesFrom1Lab, valuesFrom3Lab):
     amountOfNumbersAtIntervals = valuesFrom1Lab['amountOfNumbersAtIntervals']
     intervalBoundaries = valuesFrom1Lab['intervalBoundaries']
     randNumbersArray_FromFile = valuesFrom1Lab['randNumbersArray_FromFile']

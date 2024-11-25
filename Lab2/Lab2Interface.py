@@ -1,17 +1,12 @@
 import tkinter as tk
-
-from Lab1 import LogicFor1Lab
 from Lab2 import LogicFor2Lab  # Импорт логики для лабораторной 2
 
 
 # Класс интерфейса для лабораторной 2
 class lab2ClassInterface(tk.Frame):
-    def __init__(self, parent, controller):
-        """
-        Конструктор класса интерфейса для лабораторной 2.
-        Создает метки для отображения коэффициентов и вызывает функцию для расчета.
-        """
+    def __init__(self, parent, controller, lab1=None):
         super().__init__(parent)
+        self.lab1 = lab1
 
         # Контейнер для центрирования элементов интерфейса
         container = tk.Frame(self)
@@ -25,11 +20,10 @@ class lab2ClassInterface(tk.Frame):
         self.excess_label = tk.Label(container, font=("Arial", 21))
         self.excess_label.pack(pady=20)
 
-        self.on_initialize()
+        #self.on_initialize()
 
     def on_initialize(self):
-        valuesFrom1Lab = LogicFor1Lab.calculation_of_characteristics_from_1_labs()  # переход к файлу содержащему методы вычисления нужных в этой лабе данных
-
+        valuesFrom1Lab = self.lab1.valuesFrom1Lab
         # Инициализируем расчет характеристик сразу при создании интерфейса
         valuesFrom2Lab = LogicFor2Lab.calculation_of_characteristics_from_2_labs(valuesFrom1Lab)
         # Обновляем метки на интерфейсе с новыми значениями
