@@ -5,6 +5,7 @@ from Lab3.Lab3Interface import lab3ClassInterface
 from Lab4.Lab4Interface import lab4ClassInterface
 from Lab5.Lab5Interface import lab5ClassInterface
 from Lab6.Lab6Interface import lab6ClassInterface
+from Lab7.Lab7Interface import lab7ClassInterface
 
 
 class App(tk.Tk):
@@ -39,6 +40,7 @@ class App(tk.Tk):
             {"class": lab4ClassInterface, "extra_params": ["lab1ClassInterface", "lab3ClassInterface"]},
             {"class": lab5ClassInterface, "extra_params": []},
             {"class": lab6ClassInterface, "extra_params": []},
+            {"class": lab7ClassInterface, "extra_params": []},
         ]
 
         # Добавляем фреймы в словарь
@@ -76,6 +78,9 @@ class App(tk.Tk):
         button_for_lab6 = tk.Button(menu_frame, text="Лабораторная №6", command=lambda: self.show_frame("lab6ClassInterface"))
         button_for_lab6.pack(pady=10, padx=10, fill="x")
 
+        button_for_lab7 = tk.Button(menu_frame, text="Лабораторная №7", command=lambda: self.show_frame("lab7ClassInterface"))
+        button_for_lab7.pack(pady=10, padx=10, fill="x")
+
         # Показываем начальный фрейм
         self.show_frame("lab1ClassInterface")
 
@@ -88,12 +93,9 @@ class App(tk.Tk):
             # Устанавливаем привязку клавиши Enter только для lab1
             self.unbind("<Return>")  # Сначала удаляем предыдущие привязки
             self.bind("<Return>", frame.on_enter_pressed) # Привязываем клавишу "Enter" к функции добавления чисел(on_add_click) через функцию обработки нажатия клавиши Enter
-        self.frames["lab2ClassInterface"].on_initialize()
-        self.frames["lab3ClassInterface"].on_initialize()
-        self.frames["lab4ClassInterface"].on_initialize()
-        self.frames["lab5ClassInterface"].on_initialize()
-        self.frames["lab6ClassInterface"].on_initialize()
-
+        # Вызываем on_initialize только для активного фрейма
+        if hasattr(frame, 'on_initialize'):
+            frame.on_initialize()
 
 if __name__ == "__main__":
     app = App()
